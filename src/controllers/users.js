@@ -2,7 +2,7 @@ const responseStandard = require('../helpers/response')
 const Joi = require('joi')
 const upload = require('../helpers/upload')
 // const paging = require('../helpers/pagination')
-const { Users } = require('../models')
+const { Users,Messages } = require('../models')
 const { Op } = require('sequelize')
 const { APP_URL, APP_PORT } = process.env
 
@@ -56,5 +56,35 @@ module.exports = {
             }
           }
         })
+      },
+      sendMessage: async (req,res) => {
+        const { id } = req.user
+        const schema = Joi.object({
+            message: Joi.string().max(255).required(),
+            to: Joi.number()
+        })
+        const { error,value } =schema.validate(req.body)
+
+        if (error) {
+            return responseStandard(res, error.message, {}, 400, false)
+        }else{
+            const { message,to } = value
+            const findNumber = await Users.findAll({
+                where: {phone:to}
+            })
+             if (findNumber.length === 0 || findNumber.length === undefined || findNumber.length === null) {
+                return responseStandard(res, 'phone number not found!', {}, 403, false)
+            }else{
+                const data ={
+                    from_user_id:id,
+                    to_user_id:to,
+                    messages:message
+                }
+                const result = await Messages.create(data)
+                return responseStandard(res, 'message send successfully', { result: result })
+            }
+
+        }
+
       }
 }
