@@ -7,6 +7,8 @@ const app = express()
 const { APP_PORT, APP_IP_ADDRESS } = process.env
 
 const authRoute = require('./router/auth')
+const usersRoute = require('./router/user')
+const authMiddleware = require('../src/middlewares/auth')
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(morgan('dev'))
@@ -14,6 +16,7 @@ app.use(cors())
 app.use('/uploads', express.static('assets/uploads'))
 
 app.use('/', authRoute)
+app.use('/users', authMiddleware, usersRoute)
 
 app.get('/', async (req, res) => {
     console.log('connection success!')
