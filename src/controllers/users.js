@@ -4,7 +4,7 @@ const upload = require('../helpers/upload')
 // const paging = require('../helpers/pagination')
 const { Users, Messages } = require('../models')
 const { Op } = require('sequelize')
-const { APP_URL, APP_PORT } = process.env
+// const { APP_URL, APP_PORT } = process.env
 
 module.exports = {
   viewUserProfile: async (req, res) => {
@@ -63,7 +63,7 @@ module.exports = {
       to: Joi.number()
     })
     const { error, value } = schema.validate(req.body)
-   
+
     if (error) {
       return responseStandard(res, error.message, {}, 400, false)
     } else {
@@ -71,7 +71,7 @@ module.exports = {
       const findNumber = await Users.findAll({
         where: { phone: to }
       })
-      const idUser =JSON.stringify(findNumber)
+      const idUser = JSON.stringify(findNumber)
       const userId = JSON.parse(idUser)
       // console.log(userId[0].id);
       if (findNumber.length === 0 || findNumber.length === undefined || findNumber.length === null) {
@@ -81,66 +81,119 @@ module.exports = {
           from_user_id: id,
           to_user_id: to,
           messages: message,
-          user_id :userId[0].id
+          user_id: userId[0].id
         }
         // console.log(data);
         const result = await Messages.create(data)
-        console.log(result);
+        console.log(result)
         return responseStandard(res, 'message send successfully', { result: result })
       }
     }
   },
   chatRoom: async (req, res) => {
     const { id } = req.user
-    const {userId}=req.params
+    const { userId } = req.params
     const messageFrom = await Messages.findAll({
-      where:{
-        [Op.and]:[
+      where: {
+        [Op.and]: [
           {
-            [Op.or]:[
+            [Op.or]: [
               {
-                user_id:id
+                user_id: id
               },
               {
-                user_id:userId
+                user_id: userId
               }
             ]
           },
           {
-            [Op.or]:[
+            [Op.or]: [
               {
-                from_user_id:id
+                from_user_id: id
               },
               {
-                from_user_id:userId
+                from_user_id: userId
               }
             ]
           },
           {
-            [Op.not]:[
+            [Op.not]: [
               {
-              [Op.and]:[
-                {
-                  user_id:id
-                },
-                {
-                  from_user_id:id
-                }
-              ]
-            }
-              
+                [Op.and]: [
+                  {
+                    user_id: id
+                  },
+                  {
+                    from_user_id: id
+                  }
+                ]
+              }
+
             ]
 
           }
         ]
       }
     })
-    console.log(messageFrom);
-   
+    console.log(messageFrom)
+
     if (messageFrom) {
-      return responseStandard(res, 'User has been found!', { result: messageFrom })
+      return responseStandard(res, 'message in room ready!', { result: messageFrom })
     } else {
-      return responseStandard(res, 'User not found!', {}, 404, false)
+      return responseStandard(res, 'message in room is not ready!', {}, 404, false)
     }
   },
+  deleteChatRoom: async (req, res) => {
+    const { id } = req.user
+    const { userId } = req.params
+    const messageFrom = await Messages.destroy({
+      where: {
+        [Op.and]: [
+          {
+            [Op.or]: [
+              {
+                user_id: id
+              },
+              {
+                user_id: userId
+              }
+            ]
+          },
+          {
+            [Op.or]: [
+              {
+                from_user_id: id
+              },
+              {
+                from_user_id: userId
+              }
+            ]
+          },
+          {
+            [Op.not]: [
+              {
+                [Op.and]: [
+                  {
+                    user_id: id
+                  },
+                  {
+                    from_user_id: id
+                  }
+                ]
+              }
+
+            ]
+
+          }
+        ]
+      }
+    })
+    console.log(messageFrom)
+
+    if (messageFrom) {
+      return responseStandard(res, 'Delete message succesfully!', { result: messageFrom })
+    } else {
+      return responseStandard(res, 'Delete message failed!', {}, 404, false)
+    }
+  }
 }
