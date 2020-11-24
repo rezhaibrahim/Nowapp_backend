@@ -5,5 +5,5 @@ const route = Router()
 route.get('/profile', usersController.viewUserProfile)
 route.patch('/edit-profile', usersController.editProfile)
 route.post('/send-message',usersController.sendMessage)
-
+route.get('/chat-room/:userId',usersController.chatRoom)
 module.exports = route
