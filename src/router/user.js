@@ -7,4 +7,5 @@ route.patch('/edit-profile', usersController.editProfile)
 route.post('/send-message', usersController.sendMessage)
 route.get('/chat-room/:userId', usersController.chatRoom)
 route.delete('/delete', usersController.deleteChatRoom)
+route.get('/chat-list', usersController.chatList)
 module.exports = route

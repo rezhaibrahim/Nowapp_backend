@@ -146,7 +146,7 @@ module.exports = {
   deleteChatRoom: async (req, res) => {
     const { id } = req.user
     const { userId } = req.params
-    const messageFrom = await Messages.destroy({
+    const deleteMessage = await Messages.destroy({
       where: {
         [Op.and]: [
           {
@@ -188,12 +188,28 @@ module.exports = {
         ]
       }
     })
-    console.log(messageFrom)
+    console.log(deleteMessage)
 
-    if (messageFrom) {
-      return responseStandard(res, 'Delete message succesfully!', { result: messageFrom })
+    if (deleteMessage > 0) {
+      return responseStandard(res, 'Delete message succesfully!', { result: deleteMessage })
     } else {
       return responseStandard(res, 'Delete message failed!', {}, 404, false)
+    }
+  },
+  chatList: async (req,res) => {
+    const { id } = req.user
+
+    const listMessage = await Messages.findAll({
+      where :{
+        from_user_id:id
+      },
+      group: ['user_id']
+    })
+    console.log(listMessage);
+    if (listMessage) {
+      return responseStandard(res, 'list message succesfully!', { result: listMessage })
+    } else {
+      return responseStandard(res, 'list message failed!', {}, 404, false)
     }
   }
 }
