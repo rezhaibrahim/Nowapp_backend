@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
     const token = authorization.slice(7, authorization.length)
     try {
       const payload = jwt.verify(token, process.env.USER_KEY)
-      console.log(payload)
+      // console.log(payload)
       if (payload) {
         req.user = payload
         next()

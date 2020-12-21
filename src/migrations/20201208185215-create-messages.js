@@ -1,24 +1,27 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable('Messages', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      phone: {
+      sender: {
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING
+      recipient: {
+        type: Sequelize.INTEGER
       },
-      info: {
-        type: Sequelize.STRING
+      messages: {
+        type: Sequelize.TEXT
       },
-      picture: {
-        type: Sequelize.STRING
+      isLates: {
+        type: Sequelize.BOOLEAN
+      },
+      unread: {
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,
@@ -31,6 +34,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable('Messages');
   }
 };
