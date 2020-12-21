@@ -8,7 +8,7 @@ const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server, {})
 module.exports = io
-const { APP_PORT, APP_IP_ADDRESS } = process.env
+const { APP_PORT } = process.env
 
 const authRoute = require('./router/auth')
 const usersRoute = require('./router/user')
@@ -35,7 +35,7 @@ app.get('/', async (req, res) => {
   })
 })
 
-server.listen(APP_PORT, APP_IP_ADDRESS, () => {
+server.listen(APP_PORT, () => {
   const host = server.address().address
   const port = server.address().port
   console.log('App listening  http://%s:%s', host, port)
